@@ -73,7 +73,7 @@ def process_new_user():
 # Login page
 #-----------------------------------------------------------
 
-@app.get("/user/login")
+@app.get("/login")
 def show_login_form():
     return render_template("pages/login.jinja")
 
@@ -113,6 +113,24 @@ def login_user():
 
         flash("Login successful", "success")
         return redirect("/")
+    
+#-----------------------------------------------------------
+# Admin
+#-----------------------------------------------------------
+@app.get("/admin")
+@login_required
+def admin_page():
+    # Can only access this route if logged in
+    return redirect("/admin")
+
+#-----------------------------------------------------------
+# Logout
+#-----------------------------------------------------------
+@app.get("/logout")
+def logout_admin():
+    session.clear()
+    flash(f"You have been logged out", "success")
+    return redirect("/")
 
 #-----------------------------------------------------------
 # Creature list page - Show all the creatures
