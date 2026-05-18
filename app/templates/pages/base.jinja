@@ -34,7 +34,9 @@
         <nav>
             {% if session.logged_in %}
             <li>Welcome, {{ session.user.forename }}!</li>
+             <li><a href="/">Home</a></li>
             <li><a href="/admin">Admin</a></li>
+            <li><a href="/message_form">Messages</a></li>
             <li><a href="/logout">Logout</a></li>
         {% else %}
             <li><a href="/">Home</a></li>

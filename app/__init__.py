@@ -121,8 +121,7 @@ def login_user():
 @login_required
 def admin_page():
     # Can only access this route if logged in
-    return redirect("/admin")
-
+    return render_template("pages/admin.jinja")
 #-----------------------------------------------------------
 # Logout
 #-----------------------------------------------------------
@@ -131,6 +130,50 @@ def logout_admin():
     session.clear()
     flash(f"You have been logged out", "success")
     return redirect("/")
+
+
+#-----------------------------------------------------------
+# Show Message Form
+#-----------------------------------------------------------
+@app.get("/message_form")
+def show_message_form():
+    return render_template("pages/message_form.jinja")
+
+#-----------------------------------------------------------
+# Post Message
+#-----------------------------------------------------------
+@app.post("/message")
+def post_message():
+
+    # Get form data
+    title = request.form.get('title', '').strip()
+    body = request.form.get('body', '').strip()
+
+    # Validate data
+    if not title:
+        flash("Title is required", "error")
+        return redirect("/message_form")
+
+    if len(title) > 40:
+        flash("Title is too long (max 40 chars)", "error")
+        return redirect("/message_form")
+
+    # Escape text inputs
+    title = html.escape(title)
+    body = html.escape(body)
+
+    # Add to database
+    with connect_db() as db:
+        sql = """
+            INSERT INTO messages (title, body)
+            VALUES (?, ?)
+        """
+        params = (title, body)
+        db.execute(sql, params)
+
+    flash(f"Message added")
+    return redirect("/")
+
 
 #-----------------------------------------------------------
 # Creature list page - Show all the creatures
