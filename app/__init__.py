@@ -109,19 +109,12 @@ def login_user():
             "username": username,
             "forename": user["forename"],
             "surname":  user["surname"],
+            "id":       user["id"]
         }
 
         flash("Login successful", "success")
         return redirect("/")
-    
-#-----------------------------------------------------------
-# Admin
-#-----------------------------------------------------------
-@app.get("/admin")
-@login_required
-def admin_page():
-    # Can only access this route if logged in
-    return render_template("pages/admin.jinja")
+
 #-----------------------------------------------------------
 # Logout
 #-----------------------------------------------------------
@@ -162,13 +155,15 @@ def post_message():
     title = html.escape(title)
     body = html.escape(body)
 
+    user_id = session["user"]["id"]
+
     # Add to database
     with connect_db() as db:
         sql = """
-            INSERT INTO messages (title, body)
-            VALUES (?, ?)
+            INSERT INTO messages (title, body, user_id)
+            VALUES (?, ?, ?)
         """
-        params = (title, body)
+        params = (title, body, user_id)
         db.execute(sql, params)
 
     flash(f"Message added")
@@ -176,19 +171,19 @@ def post_message():
 
 
 #-----------------------------------------------------------
-# Creature list page - Show all the creatures
+# messages 
 #-----------------------------------------------------------
-@app.get("/creatures")
-def show_all_creatures():
+@app.get("/messages_list")
+def show_all_messages():
     with connect_db() as db:
         sql = """
-            SELECT id, species, name
-            FROM creatures
+            SELECT user_id, title, body
+            FROM messages
         """
         params = ()
-        creatures = db.execute(sql, params).fetchall()
+        messages = db.execute(sql, params).fetchall()
 
-        return render_template("pages/creature_list.jinja", creatures=creatures)
+        return render_template("pages/messages_list.jinja", messages=messages)
 
 
 #-----------------------------------------------------------
