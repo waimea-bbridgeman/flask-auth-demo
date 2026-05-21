@@ -128,7 +128,7 @@ def logout_admin():
 #-----------------------------------------------------------
 # Show Message Form
 #-----------------------------------------------------------
-@app.get("/message_form")
+@app.get("/message/new")
 def show_message_form():
     return render_template("pages/message_form.jinja")
 
@@ -167,18 +167,22 @@ def post_message():
         db.execute(sql, params)
 
     flash(f"Message added")
-    return redirect("/")
+    return redirect("/messages")
 
 
 #-----------------------------------------------------------
 # messages 
 #-----------------------------------------------------------
-@app.get("/messages_list")
+@app.get("/messages")
 def show_all_messages():
     with connect_db() as db:
         sql = """
             SELECT user_id, title, body
             FROM messages
+        """
+        sql = """
+            SELECT forename, surname
+            FROM users
         """
         params = ()
         messages = db.execute(sql, params).fetchall()

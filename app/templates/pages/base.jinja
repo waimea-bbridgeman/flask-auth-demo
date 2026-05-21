@@ -33,15 +33,15 @@
 
         <nav>
             {% if session.logged_in %}
-            <li>Welcome, {{ session.user.forename }}!</li>
-             <li><a href="/">Home</a></li>
-            <li><a href="/messages_list">Posts</a></li>
-            <li><a href="/message_form">New Message</a></li>
-            <li><a href="/logout">Logout</a></li>
+             Welcome, {{ session.user.forename }}!
+            <a href="/">Home</a>
+            <a href="/messages">Posts</a>
+            <a href="/message/new">New Message</a>
+            <a href="/logout">Logout</a>
         {% else %}
-            <li><a href="/">Home</a></li>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/user/new">Sign-Up</a></li>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+            <a href="/user/new">Sign-Up</a>
         {% endif %} 
         </nav>
     </header>
