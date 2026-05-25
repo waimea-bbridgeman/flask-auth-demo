@@ -130,7 +130,7 @@ def logout_admin():
 #-----------------------------------------------------------
 @app.get("/message/new")
 def show_message_form():
-    return render_template("pages/message_form.jinja")
+    return render_template("pages/message/new.jinja")
 
 #-----------------------------------------------------------
 # Post Message
@@ -145,11 +145,11 @@ def post_message():
     # Validate data
     if not title:
         flash("Title is required", "error")
-        return redirect("/message_form")
+        return redirect("/message/new")
 
     if len(title) > 40:
         flash("Title is too long (max 40 chars)", "error")
-        return redirect("/message_form")
+        return redirect("/message/new")
 
     # Escape text inputs
     title = html.escape(title)
@@ -171,25 +171,45 @@ def post_message():
 
 
 #-----------------------------------------------------------
-# messages 
+# Messages 
 #-----------------------------------------------------------
 @app.get("/messages")
 def show_all_messages():
     with connect_db() as db:
         sql = """
-            SELECT user_id, title, body
+            SELECT
+                messages.title,
+                messages.body,
+                users.forename,
+                users.surname
             FROM messages
-        """
-        sql = """
-            SELECT forename, surname
-            FROM users
+            JOIN users
+                ON messages.user_id = users.id
         """
         params = ()
         messages = db.execute(sql, params).fetchall()
 
         return render_template("pages/messages_list.jinja", messages=messages)
 
+#-----------------------------------------------------------
+# Delete 
+#-----------------------------------------------------------
+@app.get("/delete/message<int:id>")
+def delete(id):
+    with connect_db() as db: 
+        sql = """
+            DELETE FROM 
+            messages
+            WHERE id=?
+    """
+        params = [id]
+        db.execute(sql, params)
+        flash("The piece has been deleted", "success")
+    return redirect("messages")
 
+       
+        
+       
 #-----------------------------------------------------------
 # Help page - Show some help
 #-----------------------------------------------------------
