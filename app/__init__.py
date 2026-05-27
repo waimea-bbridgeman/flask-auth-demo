@@ -130,7 +130,7 @@ def logout_admin():
 #-----------------------------------------------------------
 @app.get("/message/new")
 def show_message_form():
-    return render_template("pages/message/new.jinja")
+    return render_template("pages/message_form.jinja")
 
 #-----------------------------------------------------------
 # Post Message
@@ -176,15 +176,16 @@ def post_message():
 @app.get("/messages")
 def show_all_messages():
     with connect_db() as db:
-        sql = """
-            SELECT
-                messages.title,
+        sql = """ 
+            SELECT 
+                messages.id     AS mid, 
+                messages.title, 
                 messages.body,
-                users.forename,
-                users.surname
+                users.id        AS uid,
+                users.forename
+
             FROM messages
-            JOIN users
-                ON messages.user_id = users.id
+            JOIN users ON messages.user_id = users.id
         """
         params = ()
         messages = db.execute(sql, params).fetchall()
@@ -194,22 +195,45 @@ def show_all_messages():
 #-----------------------------------------------------------
 # Delete 
 #-----------------------------------------------------------
-@app.get("/delete/message<int:id>")
+@app.get("/message/delete/<int:id>")
+@login_required
 def delete(id):
     with connect_db() as db: 
+        sql = """ 
+            SELECT user_id
+            FROM messages
+            WHERE id=?
+        """
+        params = (id,)
+        message = db.execute(sql, params).fetchone()
+
+        if message and message["user_id"] == session["user"]["id"]:
+            sql = """
+                DELETE FROM 
+                messages
+                WHERE id=?
+            """
+            params = [id]
+            db.execute(sql, params)
+            flash("The message has been deleted", "success")
+
+        return redirect("/messages")
+        
+#-----------------------------------------------------------
+# Edit 
+#-----------------------------------------------------------
+@app.get("/message/edit/<int:id>")
+@login_required
+def edit(id):
+    with connect_db() as db: 
         sql = """
-            DELETE FROM 
+            SELECT FROM 
             messages
             WHERE id=?
     """
         params = [id]
         db.execute(sql, params)
-        flash("The piece has been deleted", "success")
-    return redirect("messages")
-
-       
-        
-       
+        return redirect("/messages")   
 #-----------------------------------------------------------
 # Help page - Show some help
 #-----------------------------------------------------------

@@ -154,3 +154,10 @@ form {
     }
 }
 
+/* Message Button --------------------------------------------------*/
+
+#message-button {
+        padding: var(--padding);
+        background-color: var(--panel-bg);
+        border: 1px solid var(--border-col);
+    } 

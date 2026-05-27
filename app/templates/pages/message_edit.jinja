@@ -1,0 +1,32 @@
+{#=====================================================
+  Welcome page
+=====================================================#}
+
+{% extends 'pages/base.jinja' %}
+
+
+{% block content %}
+  
+  {% if session.logged_in and message.uid == session.user.id %}
+        
+        <h1 class="welcome">Edit a message!</h1>
+
+        <form method="post" action="/message">
+        <h3>Edit Message</h3>
+     
+        <label>
+            Title
+            <input name="title" type="text" placeholder="e.g. Walk the Elephant" required>
+        </label>
+
+        <label>
+            Body
+            <textarea name="body" placeholder="e.g. Two scoops" required></textarea>
+        </label>
+
+        <button>Confirm</button>
+        </form>
+{% endif %}
+
+{% endblock %}
+

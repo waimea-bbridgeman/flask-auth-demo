@@ -17,8 +17,15 @@
             <div class="message-item">
                 <h3>{{ message.title }}</h3>
                 <p>{{ message.body }}</p>
-            </div>
+                <p>Posted by: {{ message.forename }}</p>
 
+                {% if session.logged_in and message.uid == session.user.id %}
+                    <button id="message-button"><a href="/message/delete/{{ message.mid }}" onclick="return confirm('Really delete?');">Delete</a></button>
+                    <button id="message-button"><a href="/message/edit/{{ message.mid }}">Edit</a></button>
+                {% endif %}
+            </div>
+            
+                
         {% else %}
 
             <p>No messages!</p>
