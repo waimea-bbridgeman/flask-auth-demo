@@ -11,17 +11,17 @@
         
         <h1 class="welcome">Edit a message!</h1>
 
-        <form method="post" action="/message">
+        <form method="post" action="/message/edit/{{ message.mid }}">
         <h3>Edit Message</h3>
      
         <label>
             Title
-            <input name="title" type="text" placeholder="e.g. Walk the Elephant" required>
+            <textarea name="title" required>{{ message.title }}</textarea> 
         </label>
 
         <label>
             Body
-            <textarea name="body" placeholder="e.g. Two scoops" required></textarea>
+            <textarea name="body" required>{{ message.body }}</textarea>
         </label>
 
         <button>Confirm</button>
